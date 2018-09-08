@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+</head>
+<center>
+<form method="POST">
+{% csrf_token %}
+    <label for="username">帳號：</label>
+    <input type="text" name="username" required><br>
+    <label for="password">密碼：</label>
+    <input type="password" name="password" required><br>
+    <button type="submit" >submit</button>
+</form>
+</center>

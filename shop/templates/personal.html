@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script>
+        function undisable() {
+            list = document.getElementsByClassName("edit")
+            for (var i = 0; i < list.length; i++) {
+                list[i].disabled = false
+            }
+            
+        }
+    </script>
+</head>
+<center>
+<form method="POST">
+{% csrf_token %}
+    <label>帳號：{{ account }}</label><br>
+    <label for="password">密碼：</label>
+    <input type="text"  class="edit" disabled name="password"><br>
+    <label for="name">姓名：</label>
+    <input type="text" class="edit" disabled value="{{ name }}" name="name"><br>
+    <label for="sex">性別：</label>
+    <input type="text" class="edit" disabled value="{{ sex }}" name="sex"><br>
+    <label for="phone">手機：</label>
+    <input type="text" class="edit" disabled value="{{ phone }}" name="phone"><br>
+    <button type="submit">submit</button>
+</form>
+<button onclick="undisable();">edit</button>
+<a href="/logout/">logout</a>
+</center>
