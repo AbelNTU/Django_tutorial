@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from .form import RegisterForm
+from .form import RegisterForm, EditForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from .models import User
+from django.contrib.auth.forms import SetPasswordForm
 # Create your views here.
 
 def register(request):
@@ -17,7 +18,6 @@ def register(request):
             return HttpResponseRedirect('/')
     else:
         form = RegisterForm()
-        return render(request,'register.html',{'form':form,})
     return render(request,'register.html',{'form':form,})
 
 def User_login(request):
@@ -41,19 +41,27 @@ def User_logout(request):
 def personal(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
+    instance = User.objects.get(username=request.user.username)
     if request.method == 'POST':
-        print(request.user.username)
-        user = User.objects.get(username=request.user.username)
-        user.name = request.POST.get('name')
-        user.sex = request.POST.get('sex')
-        user.phone = request.POST.get('phone')
-        user.save()
-        return HttpResponseRedirect('/personal/')
+        form = EditForm(request.POST,instance=instance)
+        if form.is_valid():
+            form.save()
     else:
-        return render(request, 'personal.html',{'account':request.user.username, 'password':request.user.password,
-                                                'name':request.user.name, 'sex':request.user.sex,
-                                                'phone':request.user.phone})
-    return HttpResponseRedirect('/login/')
+        form = EditForm(instance=instance)
+    return render(request, 'personal.html',
+        {
+            'account': request.user.username,
+            'form':form
+        })
+
+def reset_password(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    form = SetPasswordForm(user=request.user)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('/logout/')
+    return render(request, 'reset.html',{ 'form':form })
 
 def home(request):
     return render(request,'home.html')

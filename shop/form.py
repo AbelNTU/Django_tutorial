@@ -1,6 +1,5 @@
 from django.forms import ModelForm
 #from django.contrib.auth.models import User
-from django.db import models
 from .models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -19,14 +18,13 @@ class RegisterForm(UserCreationForm):
             "phone":"手機",
         }
 
-'''
-class LoginForm(ModelForm):
-    class Meta:
-        model = User
-        fields = UserCreationForm.Meta.fields + ('username','password1')
-
 class EditForm(ModelForm):
     class Meta:
         model = User
-        fields = 
-'''
+        fields = ('name','sex','email','phone')
+        labels = {
+            "name":"姓名",
+            "sex":"性別",
+            "email":"信箱",
+            "phone":"手機",
+        }

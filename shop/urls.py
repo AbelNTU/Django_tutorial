@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^login/',views.User_login),
     url(r'^personal/',views.personal),
     url(r'^logout/',views.User_logout),
+    url(r'^reset',views.reset_password),
 ]
