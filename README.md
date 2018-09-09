@@ -430,7 +430,7 @@ def personal(request):
 [127.0.0.1:8000/personal](127.0.0.1:8000/personal)
 ![](iamges/img_8.png)
 
-最後是更改密碼的部分，由於還算是常看到的功能，所唷Django 內已經有寫好的重設密碼功能[(Built-forms for password changing)](https://docs.djangoproject.com/en/2.1/topics/auth/default/#django.contrib.auth.forms.PasswordChangeForm)
+最後是更改密碼的部分，由於還算是常看到的功能，所以Django 內已經有寫好的重設密碼功能[(Built-forms for password changing)](https://docs.djangoproject.com/en/2.1/topics/auth/default/#django.contrib.auth.forms.PasswordChangeForm)
 
 ```jinja
 <!--shop/templates/reset.html-->
