@@ -107,15 +107,21 @@ AUTH_USER_MODEL = 'shop.User'
 ```  
 代表我們不使用Django預設的User模型，改用我們定義的模型。
 
-建立完model之後，如果希望在admin後台查看資料，需要到該app資料架下的`admin.py`註冊  
+建立完model之後，如果希望在admin後台查看資料，需要到該app資料架下的`admin.py`註冊
 
 ```python
 # shop/admin.py
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-# Register your models here.
 
-admin.site.register(User,UserAdmin)
+# Register your models here.
+from .models import User   # 這邊一定要匯入User，感謝RelaxOP提醒
+from django.contrib.auth.admin import UserAdmin
+
+@admin.register(User)
+class newUserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'name', 'sex','email','phone','is_active','is_staff')
+    list_filter = ('username','sex',)
+
 ```
 <a name="database_superuser"></a>
 > ## 建立資料庫、superuser
