@@ -2,7 +2,7 @@
 ---
 > This repository contains code I have tested before. If you follow the markdown file and get errors, please download this repository and run it first.
 ---
-> 目錄
+## 目錄
 
 - [需求](#requirement)
 - [環境](#environment)
@@ -15,7 +15,8 @@
 - [登入、登出](#log)
 - [個人頁面修改](#revise)
 <a name='requirement'></a>
-> 需求
+---
+## 需求
 1. 使用者能註冊，包含*帳號、密碼、姓名、性別、電話號碼、郵件*
 2. 使用者能登入跟登出
 3. 使用者能修改資料，僅限*密碼、姓名、性別、電話號碼、郵件*
@@ -24,7 +25,8 @@
 - [python3.6](https://www.python.org)
 - [Django1.11.11](https://www.djangoproject.com)
 <a name="environment"></a>
-> 建立環境
+---
+## 建立環境
 
 確認python,Django版本
 ```
@@ -62,9 +64,11 @@ INSTALLED_APPS = [
 'shop',
 ]
 ```
+---
 <a name="model"></a>
->##  建立model
-> > 如果app需要使用到資料庫，models的功用就是建立table和定義各欄位。
+
+##  建立model
+>  如果app需要使用到資料庫，models的功用就是建立table和定義各欄位。
 
 考慮到我們的應用，我們需要讓使用者登入，還要儲存姓名等額外資料。
 
@@ -125,8 +129,10 @@ class newUserAdmin(admin.ModelAdmin):
     list_filter = ('username','sex',)
 
 ```
+---
 <a name="database_superuser"></a>
-> ## 建立資料庫、superuser
+
+## 建立資料庫、superuser
 
 完成`models.py`後，就要migrate到資料庫。
 
@@ -137,7 +143,7 @@ $ python manage.py makemigrations
 $ python manage.py migrate
 ```
 
-> 建立superuser
+### 建立superuser
 ```console
 $ python manage.py createsuperuser
 ```
@@ -168,10 +174,13 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> quit()
 ```
 在admin頁面SHOP下的Users就會新增Kevin，點進去如下圖
-![](iamges/img_3.png)
+![](iamges/img_3.png)  
 
+---
 <a name="home"></a>
-> ## 建立首頁、URL pattern  
+
+## 建立首頁、URL pattern  
+
 首先在`shop`下建立`templates`資料夾，templates會儲存`shop`需要的html模板。先新增`home.html、 ligin.html、 personal.html、 register.html`空白檔案。
 
 先完成`home.html`
@@ -229,8 +238,10 @@ urlpatterns = [
 再次打開[127.0.0.1:8000](127.0.0.1:8000)，會發現頁面已經變成home.html的樣子
 ![](iamges/img_4.png)
 
+---
 <a name="register"></a>
-> ## 建立註冊頁面
+
+## 建立註冊頁面
 >> 一個註冊的頁面對html來說就是一個`form`，利用`POST`方法對資料庫做新增動作。而Django也提供了快速製作form的方法[(Working with forms)](https://docs.djangoproject.com/en/2.1/topics/forms/)
 
 在`shop`下新增`form.py`
@@ -317,8 +328,9 @@ return render(request,'register.html',{'form':form,})
 
 >[Django.forms.forms](https://docs.djangoproject.com/en/2.1/_modules/django/forms/forms/#Form)的__str__預設為回傳self.as_table()，其實就是回傳一個html字串，`views`的render function就是把這個字串傳進Django的templates system。之後還會在[個人頁面](#personal)看到其他關於DTL的例子。
 
-
+---
 <a name="log"></a>
+
 ## 登入、登出
 > 我們使用django提供的authentication system，詳細的API reference可參考[API reference for the default implementation](https://docs.djangoproject.com/en/2.1/ref/contrib/auth/)
 ```jinja
@@ -379,7 +391,9 @@ def User_logout(request):
 ![](iamges/img_7.png)
 點擊連結會發現跳回到首頁，而且點擊登入還需要輸入帳號密碼，就代表登出成功了。
 
+---
 <a name="personal"></a>
+
 ## 個人頁面修改
 > 在此節中，不僅會繼續使用Django Templates language，還會根據使用者不同從資料庫提取資料輸出在網頁內容上。此外還允許使用者編輯一些欄位來更新資料庫。
 
