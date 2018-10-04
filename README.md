@@ -1,5 +1,7 @@
 # 製作能讓使用者註冊及登入的頁面 #
-
+---
+> This repository contains code I have tested before. If you follow the markdown file and get errors, please download this repository and run it first.
+---
 > 目錄
 
 - [需求](#requirement)
