@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth import update_session_auth_hash
 # Create your views here.
 
 def register(request):
@@ -31,11 +32,11 @@ def User_login(request):
         login(request, user)
         return HttpResponseRedirect('/personal/')
     else:
-        return render(request,'login.html')
+        return render(request,'login.html',{'error_code':1,})
 
 def User_logout(request):
     logout(request)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/login/')
 
 
 def personal(request):
@@ -57,9 +58,10 @@ def personal(request):
 def reset_password(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
-    form = SetPasswordForm(user=request.user)
+    form = SetPasswordForm(user=request.user, data=request.POST)
     if form.is_valid():
         form.save()
+        update_session_auth_hash(request, form.user)
         return HttpResponseRedirect('/logout/')
     return render(request, 'reset.html',{ 'form':form })
 

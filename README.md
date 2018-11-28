@@ -1,7 +1,19 @@
 # 製作能讓使用者註冊及登入的頁面 #
 ---
-> This repository contains code I have tested before. If you follow the markdown file and get errors, please download this repository and run it first.
+> 中文化的Django的資源
+> > * [Django 基本教學 - 從無到有 Django-Beginners-Guide](https://github.com/twtrubiks/django-tutorial)
+> > * [Django -- 從平凡到超凡](http://yltang.net/tutorial/django/0/)
+> > * [Django Girls 學習指南](https://djangogirlstaipei.gitbooks.io/django-girls-taipei-tutorial/)
+> > * [Django 教學 1: 本地圖書館網站](https://developer.mozilla.org/zh-TW/docs/Learn/Server-side/Django/Tutorial_local_library_website)
+> > *
+
+在這個Django的project裡，會完成一個簡單的購物網站的網頁。
+
+
+__如果下面有任何的錯誤，歡迎來信或發個issue讓我知道(joe81906@gmail.com)__
+
 ---
+
 ## 目錄
 
 - [需求](#requirement)
@@ -14,6 +26,11 @@
 - [建立註冊頁面](#register)
 - [登入、登出](#log)
 - [個人頁面修改](#revise)
+
+[2018/11/28更新]
+- [修改密碼](#setpassword)
+- [改為中文環境](#TW)
+- []
 <a name='requirement'></a>
 ---
 ## 需求
@@ -166,7 +183,8 @@ Python 3.6.3 (v3.6.3:2c5fed86e0, Oct  3 2017, 00:32:08)
 Type "help", "copyright", "credits" or "license" for more information.
 (InteractiveConsole)
 >>> from shop.models import User
->>> user = User(username="Kevin", password="password_test")
+>>> user = User(username="Kevin")
+>>> user.set_password('password_test')
 >>> user.phone = "0987123456"
 >>> user.sex = "male"
 >>> user.name = "Kevin"
@@ -451,6 +469,30 @@ def personal(request):
 登入後頁面如下
 [127.0.0.1:8000/personal](127.0.0.1:8000/personal)
 ![](iamges/img_8.png)
+
+
+<a name='setpassword'></a>
+
+## 重設密碼
+> 在Djaogo裡有一些重置密碼的方法
+> 1. 作為網頁的建立者(也就是用Django建立的這個專案在本地的電腦)，可以直接用`python manage.py changepassword <User_ID>`來改變或是進入shell裡面
+```
+python manage.py shell
+Python 3.6.3 (v3.6.3:2c5fed86e0, Oct  3 2017, 00:32:08)
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from shop.models import User
+>>> User.objects.all()
+<QuerySet [<User: Lin>, <User: Kevin>]>
+>>> q = User.objects.get(name="Kevin")
+>>> q.set_password('<Anything>')
+>>> q.save()
+>>>
+```
+> 2. 作為網頁的使用者，有三種模式可以選擇
+> > * 
+
 
 最後是更改密碼的部分，由於還算是常看到的功能，所以Django 內已經有寫好的重設密碼功能[(Built-forms for password changing)](https://docs.djangoproject.com/en/2.1/topics/auth/default/#django.contrib.auth.forms.PasswordChangeForm)
 

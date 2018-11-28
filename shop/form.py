@@ -1,7 +1,9 @@
 from django.forms import ModelForm
 #from django.contrib.auth.models import User
 from .models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
+
+from django.utils.translation import ugettext_lazy as _
 
 class RegisterForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
@@ -23,8 +25,10 @@ class EditForm(ModelForm):
         model = User
         fields = ('name','sex','email','phone')
         labels = {
-            "name":"姓名",
+            "name":_("姓名"),
             "sex":"性別",
             "email":"信箱",
             "phone":"手機",
         }
+
+    

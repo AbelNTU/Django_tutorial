@@ -1,7 +1,6 @@
-<center>
-<form method="POST" class="post-form">
+{% load i18n %}
+<form method="POST">
 {% csrf_token %}
-        {{ form }}
-    <button type="submit">submit</button>
+{{ form }}
+<button type="submit">submit</button>
 </form>
-</center>
