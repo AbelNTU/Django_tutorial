@@ -1,6 +1,6 @@
 # 製作能讓使用者註冊及登入的頁面 #
 ---
-> 中文化的Django的資源
+> 中文化的Django資源
 > > * [Django 基本教學 - 從無到有 Django-Beginners-Guide](https://github.com/twtrubiks/django-tutorial)
 > > * [Django -- 從平凡到超凡](http://yltang.net/tutorial/django/0/)
 > > * [Django Girls 學習指南](https://djangogirlstaipei.gitbooks.io/django-girls-taipei-tutorial/)
@@ -491,35 +491,38 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 > 2. 作為網頁的使用者，有三種模式可以選擇
-> > * 
 
+|種類|內容|
+|--------------------|--|
+|PasswordChangeForm  |繼承SetPasswordForm，要先輸入舊密碼，和兩次新密碼|
+|PasswordResetForm   |要求輸入email，會寄一個改密碼的連結到信箱|
+|SetPasswordForm     |最簡單的直接修改密碼|
 
-最後是更改密碼的部分，由於還算是常看到的功能，所以Django 內已經有寫好的重設密碼功能[(Built-forms for password changing)](https://docs.djangoproject.com/en/2.1/topics/auth/default/#django.contrib.auth.forms.PasswordChangeForm)
 
 ```jinja
 <!--shop/templates/reset.html-->
-<center>
 <form method="POST" class="post-form">
 {% csrf_token %}
         {{ form }}
-    <button type="submit">submit</button>
+<button type="submit">submit</button>
 </form>
-</center>
 ```
 ```python
 # 在views.py加入
 def reset_password(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
-    form = SetPasswordForm(user=request.user)
+    form = SetPasswordForm(user=request.user, data=request.POST)
     if form.is_valid():
         form.save()
+        #update_session_auth_hash(request, form.user)
         return HttpResponseRedirect('/logout/')
     return render(request, 'reset.html',{ 'form':form })
 ```
+在views加入`reset_password`，記得在`urls.py`加入規則。
 
-在寫這到這裡的時候才突然想要把重置密碼跟編輯資料分開，所以url還不知道`/reset/`要顯示的內容為何，要回到`urls.py`加入規則。
 ```python
+# shop/urls.py 
 from django.conf.urls import url
 from . import views
 
@@ -529,8 +532,32 @@ urlpatterns = [
     url(r'^login/',views.User_login),
     url(r'^personal/',views.personal),
     url(r'^logout/',views.User_logout),
-    url(r'^reset',views.reset_password),
+    url(r'^reset',views.reset_password), # <--- 加入這行
 ]
 ```
 重設密碼的頁面
+
 ![](iamges/img_9.png)
+
+<a name="TW"></a>
+
+## 改為中文環境
+
+> Django擁有世界上各地的開發者，開發者如果要在地開發，勢必要把網頁內容都翻成當地文字，然而Django提供許多好用的如UsercreationForm,SetPasswordForm，我們都必須一個一個地改label，實在不是一件容易的事。於是來自各地熱心的開發者負責將這些都翻成他們日常的語言及文字，我們現在只需要查看我們所要使用的language code。
+
+_Django 預設`USE_I18N=True`，當project不需要針對不同地區做改變時，可以到`test/settings.py`中的`USE_I18N`改為False，可以稍微優化Django_
+* 在`settings.py`找到 __LANGUAGE_CODE__
+
+| 語言 | LANGUAGE_CODE | 
+|-----|:------:|
+|zh_Hant|繁體中文|
+|zh_Hans|簡體中文|
+|ja|日文|
+|ko|韓文|
+|fr|法文|
+|ru|俄文|
+
+```python
+# Test/settings.py
+LANGUAGE_CODE = 'zh_Hant'
+```

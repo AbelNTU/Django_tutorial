@@ -61,7 +61,7 @@ def reset_password(request):
     form = SetPasswordForm(user=request.user, data=request.POST)
     if form.is_valid():
         form.save()
-        update_session_auth_hash(request, form.user)
+        #update_session_auth_hash(request, form.user)
         return HttpResponseRedirect('/logout/')
     return render(request, 'reset.html',{ 'form':form })
 
