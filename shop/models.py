@@ -19,6 +19,7 @@ class User(AbstractUser):
 class Product(models.Model):
     product_name = models.CharField(max_length=50)
     product_description = models.CharField(max_length=200)
+    product_image = models.ImageField(upload_to='photos')
     remain_product = models.IntegerField(default=0)
     def __str__(self):
         return self.product_name
