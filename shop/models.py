@@ -15,3 +15,10 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.name
+
+class Product(models.Model):
+    product_name = models.CharField(max_length=50)
+    product_description = models.CharField(max_length=200)
+    remain_product = models.IntegerField(default=0)
+    def __str__(self):
+        return self.product_name

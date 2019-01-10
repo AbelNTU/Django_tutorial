@@ -1,4 +1,4 @@
-# 製作能讓使用者註冊及登入的頁面 #
+# 製作一個購物網站 #
 ---
 > 中文化的Django資源
 > > * [Django 基本教學 - 從無到有 Django-Beginners-Guide](https://github.com/twtrubiks/django-tutorial)
@@ -29,7 +29,7 @@ __如果下面有任何的錯誤，歡迎來信或發個issue讓我知道(joe819
 
 [2018/11/28更新]
 - [修改密碼](#setpassword)
-- [改為中文環境](#TW)
+- [建立商品頁面](#product)
 - []
 <a name='requirement'></a>
 ---
@@ -539,25 +539,3 @@ urlpatterns = [
 
 ![](iamges/img_9.png)
 
-<a name="TW"></a>
-
-## 改為中文環境
-
-> Django擁有世界上各地的開發者，開發者如果要在地開發，勢必要把網頁內容都翻成當地文字，然而Django提供許多好用的如UsercreationForm,SetPasswordForm，我們都必須一個一個地改label，實在不是一件容易的事。於是來自各地熱心的開發者負責將這些都翻成他們日常的語言及文字，我們現在只需要查看我們所要使用的language code。
-
-_Django 預設`USE_I18N=True`，當project不需要針對不同地區做改變時，可以到`test/settings.py`中的`USE_I18N`改為False，可以稍微優化Django_
-* 在`settings.py`找到 __LANGUAGE_CODE__
-
-| 語言 | LANGUAGE_CODE | 
-|-----|:------:|
-|zh_Hant|繁體中文|
-|zh_Hans|簡體中文|
-|ja|日文|
-|ko|韓文|
-|fr|法文|
-|ru|俄文|
-
-```python
-# Test/settings.py
-LANGUAGE_CODE = 'zh_Hant'
-```
