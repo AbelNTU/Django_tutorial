@@ -539,3 +539,80 @@ urlpatterns = [
 
 ![](iamges/img_9.png)
 
+<a name="product"></a>
+
+## 商品頁面
+
+在此節中，我們建立讓admin上傳關於商品的訊息
+在`admin/models.py`加入`Product`的model
+```python
+class Product(models.Model):
+    product_name = models.CharField(max_length=50)
+    product_description = models.CharField(max_length=200)
+    product_price = models.IntegerField(default=0)
+    product_image = models.ImageField(null=True, blank=True, upload_to='photos')
+    remain_product = models.IntegerField(default=0)
+    def __str__(self):
+        return self.product_name
+```
+在`shop/admin.py`註冊`Product`
+```python
+@admin.register(Product)
+class newProduct(admin.ModelAdmin):
+    list_display = ('product_name','product_price','product_description','image_view')
+    readonly_fields = ('image_view',)
+    def image_view(self,obj):
+        return u'<img src="%s" height="150"/>' % obj.product_image.url
+    image_view.allow_tags = True
+```
+這時候會發現像下圖這樣，並沒有成功顯示圖片。
+![](iamges/img_10.png)
+Django建議這種讓使用者自己加入
+的圖像影音資料的情況，要另外用`media`處理，步驟如下
+到`myweb/setting.py`加入`media`路徑
+```python
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR + '/media'
+```
+為了讓Django確實讀到圖片位置，要在`myweb/urls.py`指定路徑
+```python
+from django.conf.urls import url, include
+from django.contrib import admin
+from django.conf.urls.static import static
+from django.conf import settings
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^',include('shop.urls')),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+現在確認整個網站資料夾的架構
+```cmd
+|--media/
+    |--photos/
+        |--TV.jpg
+|--shop/
+    |--migrations/
+        |--...
+    |--templates/
+        |--...
+    |--admin.py
+    |--apps.py
+    |--form.py
+    |--models.py
+    |--tests.py
+    |--urls.py
+    |--view.py
+|--myweb/
+    |--setting.py
+    |--urls.py
+    |--wsgi.py
+|--db.sqlite3
+|--manage.py
+```
+這時候就能成功顯示圖片了
+
+![](iamges/img_11.png)
+
+現在我們把商品顯示在首頁上

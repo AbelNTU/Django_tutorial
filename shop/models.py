@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 # Create your models here.
 from django.core.validators import RegexValidator
+from django.utils.html import format_html
 class User(AbstractUser):
     gender = (
         ("male", '男'),
@@ -19,7 +20,9 @@ class User(AbstractUser):
 class Product(models.Model):
     product_name = models.CharField(max_length=50)
     product_description = models.CharField(max_length=200)
-    product_image = models.ImageField(upload_to='photos')
+    product_price = models.IntegerField(default=0)
+    product_image = models.ImageField(null=True, blank=True, upload_to='photos')
     remain_product = models.IntegerField(default=0)
     def __str__(self):
         return self.product_name
+    

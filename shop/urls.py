@@ -8,4 +8,4 @@ urlpatterns = [
     url(r'^personal/',views.personal),
     url(r'^logout/',views.User_logout),
     url(r'^reset',views.reset_password),
-]
+] 
