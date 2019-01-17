@@ -2,3 +2,12 @@
 <a href="login">登入</a>
 <a href="logout">登出</a>
 
+<body>
+    {% for product in product_list %}
+    <ul>
+        <div style="border:1px solid">
+            <img src="{{ product.product_image.url }}" height="150" />
+        </div>
+    </ul>
+    {% endfor %}
+</body>

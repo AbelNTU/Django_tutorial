@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .form import RegisterForm, EditForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from .models import User
+from .models import User, Product
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import update_session_auth_hash
 # Create your views here.
@@ -66,4 +66,5 @@ def reset_password(request):
     return render(request, 'reset.html',{ 'form':form })
 
 def home(request):
-    return render(request,'home.html')
+    product_list = Product.objects.all()
+    return render(request,'home.html',{'product_list':product_list})
