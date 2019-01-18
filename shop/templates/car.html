@@ -1,0 +1,23 @@
+<head>
+    <a href="/">回首頁</a>
+</head>
+<h1> Welcome~ {{ user.name }}</h1>
+
+<h2>Your user id is {{ user.id }}</h2>
+<h2>Your phone number is {{ user.phone }}</h2>
+<h3>
+    Your shopping car contains
+    {% for item in list %}
+        <ul>
+            <form method="POST">
+            {% csrf_token %}
+                <a>{{ item.product.product_name }}</a>
+                <img src="{{ item.product.product_image.url}}" height="150">
+                <a> for {{ item.count }}共{{ item.price }}元</a>
+                <label for="booking_id"></label>
+                <input type="hidden" name="booking_id" value="{{ item.id }}">
+                <input type="submit" value="取消"></button>
+            </form>
+        </ul>
+    {% endfor %}
+</h3>

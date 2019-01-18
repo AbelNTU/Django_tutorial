@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 from django.core.validators import RegexValidator
 from django.utils.html import format_html
+from django.core.validators import MinValueValidator, MaxValueValidator
 class User(AbstractUser):
     gender = (
         ("male", '男'),
@@ -25,4 +26,19 @@ class Product(models.Model):
     remain_product = models.IntegerField(default=0)
     def __str__(self):
         return self.product_name
-    
+    def update_remain(self, number):
+        if number > int(self.remain_product) or number < 1:
+            return False
+        else:
+            self.remain_product-=number
+            self.save()
+            return True
+class ShoppingCar(models.Model):
+    client = models.ForeignKey(User)
+    product = models.ForeignKey(Product)
+    count = models.IntegerField(default=0, validators=[MinValueValidator(1)])
+    def __str__(self):
+        return self.client.name + self.count + "products"
+    def price(self):
+        return self.product.product_price * self.count        
+        

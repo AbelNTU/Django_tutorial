@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .form import RegisterForm, EditForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from .models import User, Product
+from .models import User, Product, ShoppingCar
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import update_session_auth_hash
 # Create your views here.
@@ -30,7 +30,7 @@ def User_login(request):
     print(user)
     if user is not None:
         login(request, user)
-        return HttpResponseRedirect('/personal/')
+        return HttpResponseRedirect('/')
     else:
         return render(request,'login.html',{'error_code':1,})
 
@@ -66,5 +66,38 @@ def reset_password(request):
     return render(request, 'reset.html',{ 'form':form })
 
 def home(request):
+    if request.user.is_authenticated():
+        mode = 1
+    else:
+        mode = 0
     product_list = Product.objects.all()
-    return render(request,'home.html',{'product_list':product_list})
+    return render(request,'home.html',{'product_list':product_list, 'mode':mode})
+
+def product_detail(request, product_id):
+    target = Product.objects.get(pk=product_id)
+    if request.method == 'POST':
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login/')
+        count = int(request.POST.get('book_count'))
+        if target.update_remain(count):
+            pass
+        else:
+            if count < 1:
+                return render(request, 'detail.html',{'product': target, 'remain_code':2} )
+            return render(request, 'detail.html',{'product': target, 'remain_code':1} )
+        user = request.user
+        booking = ShoppingCar.objects.create(client=user, product=target, count=count)
+        booking.save()
+    return render(request, 'detail.html',{'product': target} )
+
+def car(request):
+    if not request.user.is_authenticated():
+        HttpResponseRedirect('/login/')
+    user = request.user
+    shopping_list = user.shoppingcar_set.all()
+    if request.method == 'POST':
+        #print("hello"+str(request.POST.get('booking_id')))
+        booking = ShoppingCar.objects.get(pk=request.POST.get('booking_id'))
+        booking.delete()
+        HttpResponseRedirect('')
+    return render(request, 'car.html', {'list':shopping_list,})

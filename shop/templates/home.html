@@ -1,13 +1,23 @@
+{% if mode == 0 %}
 <a href="register">註冊</a>
 <a href="login">登入</a>
+{% endif %}
+{% if mode == 1 %}
+<a href="car">購物車</a>
+<a href="personal">個人資料</a>
 <a href="logout">登出</a>
-
+{% endif %}
 <body>
     {% for product in product_list %}
     <ul>
-        <div style="border:1px solid">
-            <img src="{{ product.product_image.url }}" height="150" />
+        <a href="{{ product.id }}">
+        <div style="">
+            <img src="{{ product.product_image.url }}" height="150" /><br>
+            <a>Name : {{ product.product_name }}</a><br>
+            <a>Price : {{ product.product_price }}</a><br>
+            <a>Remain : {{ product.remain_product }}</a><br>
         </div>
+        </a>
     </ul>
     {% endfor %}
 </body>

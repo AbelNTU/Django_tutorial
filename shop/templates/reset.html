@@ -1,7 +1,7 @@
-{% extends 'base.html' %}
-{% load i18n %}
-<p>current language: "{{ LANGUAGE_CODE }}"</p>
 
+<head>
+    <a href="/">回首頁</a>
+</head>
 <form method="POST">
 {% csrf_token %}
 {{ form }}

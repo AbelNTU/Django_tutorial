@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^personal/',views.personal),
     url(r'^logout/',views.User_logout),
     url(r'^reset',views.reset_password),
+    url(r'^(?P<product_id>[0-9]+)/$',views.product_detail),
+    url(r'^car/',views.car),
 ] 
