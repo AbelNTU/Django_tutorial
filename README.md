@@ -9,6 +9,11 @@
 
 在這個Django的project裡，會完成一個簡單的購物網站的網頁。
 
+```cmd
+$ git clone https://github.com/AbelNTU/Django_tutorial.git
+$ cd Django_tutorial
+$ python manage.py runserver
+```
 
 __如果下面有任何的錯誤，歡迎來信或發個issue讓我知道(joe81906@gmail.com)__
 
@@ -30,7 +35,12 @@ __如果下面有任何的錯誤，歡迎來信或發個issue讓我知道(joe819
 [2018/11/28更新]
 - [修改密碼](#setpassword)
 - [建立商品頁面](#product)
-- []
+
+[2019/1/18]
+
+- [購物車](#shoppingcar)
+
+
 <a name='requirement'></a>
 ---
 ## 需求
@@ -616,3 +626,87 @@ urlpatterns = [
 ![](iamges/img_11.png)
 
 現在我們把商品顯示在首頁上
+
+```python
+# shop/views.py
+def home(request):
+    if request.user.is_authenticated():
+        mode = 1
+    else:
+        mode = 0
+    product_list = Product.objects.all()
+    return render(request,'home.html',{'product_list':product_list, 'mode':mode})
+```
+
+```jinja
+# shop/templates/home.html
+{% if mode == 0 %}
+<a href="register">註冊</a>
+<a href="login">登入</a>
+{% endif %}
+{% if mode == 1 %}
+<a href="car">購物車</a>
+<a href="personal">個人資料</a>
+<a href="logout">登出</a>
+{% endif %}
+<body>
+    {% for product in product_list %}
+    <ul>
+        <a href="{{ product.id }}">
+        <div style="">
+            <img src="{{ product.product_image.url }}" height="150" /><br>
+            <a>Name : {{ product.product_name }}</a><br>
+            <a>Price : {{ product.product_price }}</a><br>
+            <a>Remain : {{ product.remain_product }}</a><br>
+        </div>
+        </a>
+    </ul>
+    {% endfor %}
+</body>
+```
+回到首頁後就能看到各個商品，接著建立每個商品的細節頁面。
+
+```python
+# shop/views.py
+def product_detail(request, product_id):
+    target = Product.objects.get(pk=product_id)
+    if request.method == 'POST':
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/login/')
+        count = int(request.POST.get('book_count'))
+        if target.update_remain(count):
+            pass
+        else:
+            if count < 1:
+                return render(request, 'detail.html',{'product': target, 'remain_code':2} )
+            return render(request, 'detail.html',{'product': target, 'remain_code':1} )
+        user = request.user
+        booking = ShoppingCar.objects.create(client=user, product=target, count=count)
+        booking.save()
+    return render(request, 'detail.html',{'product': target} )
+```
+
+```jinja
+# shop/templates/detail.html
+<head>
+    <a href="/">回首頁</a>
+</head>
+{% if remain_code == 1 %}
+<script>alert("You are asking products more than its remain.")</script>
+{% elif remain_code == 2 %}
+<script>alert("You need to ask for at least 1 product.")</script>
+{% endif %}
+<center>
+    <head>{{ product.product_name }}</head><br>
+    <img src="{{ product.product_image.url }}" height="200">
+    <h2>Price : {{ product.product_price}}</h2>
+    <h3>Description : {{ product.product_description}}</h3>
+    <h3>Remain : {{ product.remain_product }}</h3>
+    <form method="POST">
+    {% csrf_token %}
+    <label for="book_count">數量</label>
+    <input type="number" name="book_count" required>
+    <button type="submit">加入購物車</button>
+    </form>
+</center>
+```
