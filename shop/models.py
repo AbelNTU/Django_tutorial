@@ -27,7 +27,7 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
     def update_remain(self, number):
-        if number > int(self.remain_product) or number < 1:
+        if number > int(self.remain_product):
             return False
         else:
             self.remain_product-=number

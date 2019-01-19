@@ -98,6 +98,7 @@ def car(request):
     if request.method == 'POST':
         #print("hello"+str(request.POST.get('booking_id')))
         booking = ShoppingCar.objects.get(pk=request.POST.get('booking_id'))
+        booking.product.update_remain(-booking.count)
         booking.delete()
         HttpResponseRedirect('')
     return render(request, 'car.html', {'list':shopping_list,})

@@ -549,6 +549,8 @@ urlpatterns = [
 
 ![](iamges/img_9.png)
 
+--------
+
 <a name="product"></a>
 
 ## 商品頁面
@@ -564,6 +566,13 @@ class Product(models.Model):
     remain_product = models.IntegerField(default=0)
     def __str__(self):
         return self.product_name
+    def update_remain(self, number):
+        if number > int(self.remain_product) or number < 1:
+            return False
+        else:
+            self.remain_product-=number
+            self.save()
+            return True
 ```
 在`shop/admin.py`註冊`Product`
 ```python
@@ -639,7 +648,7 @@ def home(request):
 ```
 
 ```jinja
-# shop/templates/home.html
+<!--shop/templates/home.html--> 
 {% if mode == 0 %}
 <a href="register">註冊</a>
 <a href="login">登入</a>
@@ -687,7 +696,7 @@ def product_detail(request, product_id):
 ```
 
 ```jinja
-# shop/templates/detail.html
+<!--shop/templates/detail.html--> 
 <head>
     <a href="/">回首頁</a>
 </head>
@@ -710,3 +719,50 @@ def product_detail(request, product_id):
     </form>
 </center>
 ```
+
+到這邊只剩下在`urls.py`下定義好連結所對應到的view function就好
+```python
+# shop/urls.py
+urlpatterns = [
+    url(r'^$',views.home),
+    url(r'^register/',views.register),
+    url(r'^login/',views.User_login),
+    url(r'^personal/',views.personal),
+    url(r'^logout/',views.User_logout),
+    url(r'^reset',views.reset_password),
+    url(r'^(?P<product_id>[0-9]+)/$',views.product_detail),
+]
+```
+
+
+
+------
+
+<a name="shoppingcar"></a>
+
+## 購物車
+
+在此節中會實作一個購物網站都會有的購物車。首先我們這邊設定購物車是由多筆訂單所組成的。而訂單的格式如下
+> Booking
+>> 1. User : 加入購物車的使用者
+>> 2. product : 加入購物車的商品
+>> 3. count : 選定商品的數量
+>> 4. date : 加入購物車的時間(通常都會有，但在此節我們沒實作這個)
+
+決定好訂單長什麼樣子之後，我們就可以在`models.py`下定義
+
+```python
+# shop/models.py
+class ShoppingCar(models.Model):
+    client = models.ForeignKey(User)
+    product = models.ForeignKey(Product)
+    count = models.IntegerField(default=0, validators=[MinValueValidator(1)])
+    def __str__(self):
+        return self.client.name + self.count + "products"
+    def price(self):
+        return self.product.product_price * self.count    
+```
+
+注意到我們在這邊使用`ForeignKey`，它可以使各models產生連結，因為一個訂單會屬於一個使用者和對應的一個商品。詳細的說明請參考[此處](https://docs.djangoproject.com/en/2.1/ref/models/fields/#foreignkey)
+
+
