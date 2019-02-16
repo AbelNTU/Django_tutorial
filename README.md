@@ -330,6 +330,7 @@ return render(request,'register.html',{'form':form,})
 > > - [Jinja2](http://jinja.pocoo.org)
 
 更改`shop/templates/register.html`如下 
+
 ```jinja
 <!DOCTYPE html>
 <head>
@@ -338,6 +339,7 @@ return render(request,'register.html',{'form':form,})
 <body>
     <center>
         <form method="POST" class="post-form">
+        {% csrf_token %}
             <table border="1">
                {{ form }}
             </table>
@@ -365,6 +367,7 @@ return render(request,'register.html',{'form':form,})
 <!DOCTYPE html>
 <center>
 <form method="POST">
+{% csrf_token %}
     <label for="username">帳號：</label>
     <input type="text" name="username" required><br>
     <label for="password">密碼：</label>
@@ -461,6 +464,7 @@ def personal(request):
 <center>
 <label>帳號：{{ account }}</label><br>
 <form method="POST">
+{% csrf_token %}
     <fieldset id="personal_edit_form" style="border:0;" disabled>
         <table>
             {{ form }}
@@ -509,6 +513,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```jinja
 <!--shop/templates/reset.html-->
 <form method="POST" class="post-form">
+{% csrf_token %}
         {{ form }}
 <button type="submit">submit</button>
 </form>
@@ -563,7 +568,7 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
     def update_remain(self, number):
-        if number > int(self.remain_product) or number < 1:
+        if number > int(self.remain_product):
             return False
         else:
             self.remain_product-=number
@@ -708,6 +713,7 @@ def product_detail(request, product_id):
     <h3>Description : {{ product.product_description}}</h3>
     <h3>Remain : {{ product.remain_product }}</h3>
     <form method="POST">
+    {% csrf_token %}
     <label for="book_count">數量</label>
     <input type="number" name="book_count" required>
     <button type="submit">加入購物車</button>
@@ -760,4 +766,56 @@ class ShoppingCar(models.Model):
 
 注意到我們在這邊使用`ForeignKey`，它可以使各models產生連結，因為一個訂單會屬於一個使用者和對應的一個商品。詳細的說明請參考[此處](https://docs.djangoproject.com/en/2.1/ref/models/fields/#foreignkey)
 
+```python
+# shop/views.py
+def car(request):
+    if not request.user.is_authenticated():
+        HttpResponseRedirect('/login/')
+    user = request.user
+    shopping_list = user.shoppingcar_set.all()
+    if request.method == 'POST':
+        booking = ShoppingCar.objects.get(pk=request.POST.get('booking_id'))
+        booking.product.update_remain(-booking.count)
+        booking.delete()
+        HttpResponseRedirect('')
+    return render(request, 'car.html', {'list':shopping_list,})
+```
 
+```jinja
+<!--shop/templates/car.html-->
+<head>
+    <a href="/">回首頁</a>
+</head>
+<h1> Welcome~ {{ user.name }}</h1>
+
+<h2>Your user id is {{ user.id }}</h2>
+<h2>Your phone number is {{ user.phone }}</h2>
+<h3>
+    Your shopping car contains
+    {% for item in list %}
+        <ul>
+            <form method="POST">
+            {% csrf_token %}
+                <a>{{ item.product.product_name }}</a>
+                <img src="{{ item.product.product_image.url}}" height="150">
+                <a> for {{ item.count }}共{{ item.price }}元</a>
+                <label for="booking_id"></label>
+                <input type="hidden" name="booking_id" value="{{ item.id }}">
+                <input type="submit" value="取消"></button>
+            </form>
+        </ul>
+    {% endfor %}
+</h3>
+```
+
+```python
+# shop/urls.py
+[
+...,
+url(r'^car/',views.car),
+]
+```
+
+到對應的商品選擇數字按加入，再到購物車頁面就會有下圖結果
+
+![](iamges/img_12.png)
