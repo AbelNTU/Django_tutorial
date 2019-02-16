@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 from django.utils.translation import ugettext_lazy as _
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -38,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop',
+    'paypal.standard.ipn',
+    'payment',
 ]
 
 AUTH_USER_MODEL = 'shop.User'
@@ -132,3 +136,7 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR + '/media'
+
+# for paypal usage
+PAYPAL_RECEIVER_EMAIL = 'b04201032-facilitator@gmail.com'
+PAYPAL_TEST = True

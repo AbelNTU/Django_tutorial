@@ -567,7 +567,7 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
     def update_remain(self, number):
-        if number > int(self.remain_product) or number < 1:
+        if number > int(self.remain_product):
             return False
         else:
             self.remain_product-=number
@@ -765,4 +765,56 @@ class ShoppingCar(models.Model):
 
 注意到我們在這邊使用`ForeignKey`，它可以使各models產生連結，因為一個訂單會屬於一個使用者和對應的一個商品。詳細的說明請參考[此處](https://docs.djangoproject.com/en/2.1/ref/models/fields/#foreignkey)
 
+```python
+# shop/views.py
+def car(request):
+    if not request.user.is_authenticated():
+        HttpResponseRedirect('/login/')
+    user = request.user
+    shopping_list = user.shoppingcar_set.all()
+    if request.method == 'POST':
+        booking = ShoppingCar.objects.get(pk=request.POST.get('booking_id'))
+        booking.product.update_remain(-booking.count)
+        booking.delete()
+        HttpResponseRedirect('')
+    return render(request, 'car.html', {'list':shopping_list,})
+```
 
+```jinja
+<!--shop/templates/car.html-->
+<head>
+    <a href="/">回首頁</a>
+</head>
+<h1> Welcome~ {{ user.name }}</h1>
+
+<h2>Your user id is {{ user.id }}</h2>
+<h2>Your phone number is {{ user.phone }}</h2>
+<h3>
+    Your shopping car contains
+    {% for item in list %}
+        <ul>
+            <form method="POST">
+            {% csrf_token %}
+                <a>{{ item.product.product_name }}</a>
+                <img src="{{ item.product.product_image.url}}" height="150">
+                <a> for {{ item.count }}共{{ item.price }}元</a>
+                <label for="booking_id"></label>
+                <input type="hidden" name="booking_id" value="{{ item.id }}">
+                <input type="submit" value="取消"></button>
+            </form>
+        </ul>
+    {% endfor %}
+</h3>
+```
+
+```python
+# shop/urls.py
+[
+...,
+url(r'^car/',views.car),
+]
+```
+
+到對應的商品選擇數字按加入，再到購物車頁面就會有下圖結果
+
+![](iamges/img_12.png)

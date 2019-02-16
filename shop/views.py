@@ -5,6 +5,11 @@ from django.contrib.auth import authenticate, login, logout
 from .models import User, Product, ShoppingCar
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import update_session_auth_hash
+
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+from paypal.standard.forms import PayPalPaymentsForm
 # Create your views here.
 
 def register(request):
@@ -79,12 +84,13 @@ def product_detail(request, product_id):
         if not request.user.is_authenticated():
             return HttpResponseRedirect('/login/')
         count = int(request.POST.get('book_count'))
-        if target.update_remain(count):
-            pass
+        if count < 1:
+            return render(request,'detail.html',{'product': target, 'remain_code':2})
         else:
-            if count < 1:
-                return render(request, 'detail.html',{'product': target, 'remain_code':2} )
-            return render(request, 'detail.html',{'product': target, 'remain_code':1} )
+            if target.update_remain(count):
+                pass
+            else:
+                return render(request, 'detail.html',{'product': target, 'remain_code':1} )
         user = request.user
         booking = ShoppingCar.objects.create(client=user, product=target, count=count)
         booking.save()
@@ -101,4 +107,26 @@ def car(request):
         booking.product.update_remain(-booking.count)
         booking.delete()
         HttpResponseRedirect('')
-    return render(request, 'car.html', {'list':shopping_list,})
+    total = user.get_user_total_pay
+
+    ## For paypal from
+    pay_check_description = ''
+    for item in shopping_list:
+        pay_check_description += item.product.product_name
+        pay_check_description += '*' + str(item.count) + ', '
+    paypal_dict = {
+        "business": settings.PAYPAL_RECEIVER_EMAIL,
+        "amount": total,
+        "item_name": pay_check_description,
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "return": request.build_absolute_uri(reverse('done')),
+        "cancel_return": request.build_absolute_uri(reverse('cancel')),
+        "custom": "premium_plan",  # Custom command to correlate to some function later (optional)
+    }
+
+    # Create the instance.
+    form = PayPalPaymentsForm(initial=paypal_dict)
+
+    return render(request, 'car.html', {'list':shopping_list,'total':total,'form':form})
+
+    

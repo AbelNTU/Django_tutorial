@@ -18,6 +18,11 @@ class User(AbstractUser):
     def __str__(self):
         return self.name
 
+    def get_user_total_pay(self):
+        total_price = 0
+        for item in self.shoppingcar_set.all():
+            total_price += item.price()
+        return total_price
 class Product(models.Model):
     product_name = models.CharField(max_length=50)
     product_description = models.CharField(max_length=200)
@@ -41,4 +46,5 @@ class ShoppingCar(models.Model):
         return self.client.name + self.count + "products"
     def price(self):
         return self.product.product_price * self.count        
-        
+    
+            
