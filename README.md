@@ -338,7 +338,6 @@ return render(request,'register.html',{'form':form,})
 <body>
     <center>
         <form method="POST" class="post-form">
-        {% csrf_token %}
             <table border="1">
                {{ form }}
             </table>
