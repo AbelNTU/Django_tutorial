@@ -365,7 +365,6 @@ return render(request,'register.html',{'form':form,})
 <!DOCTYPE html>
 <center>
 <form method="POST">
-{% csrf_token %}
     <label for="username">帳號：</label>
     <input type="text" name="username" required><br>
     <label for="password">密碼：</label>
@@ -462,7 +461,6 @@ def personal(request):
 <center>
 <label>帳號：{{ account }}</label><br>
 <form method="POST">
-{% csrf_token %}
     <fieldset id="personal_edit_form" style="border:0;" disabled>
         <table>
             {{ form }}
@@ -511,7 +509,6 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```jinja
 <!--shop/templates/reset.html-->
 <form method="POST" class="post-form">
-{% csrf_token %}
         {{ form }}
 <button type="submit">submit</button>
 </form>
@@ -711,7 +708,6 @@ def product_detail(request, product_id):
     <h3>Description : {{ product.product_description}}</h3>
     <h3>Remain : {{ product.remain_product }}</h3>
     <form method="POST">
-    {% csrf_token %}
     <label for="book_count">數量</label>
     <input type="number" name="book_count" required>
     <button type="submit">加入購物車</button>
